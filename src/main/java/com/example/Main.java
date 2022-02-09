@@ -157,34 +157,42 @@ public class Main {
                                         case 1:
                                             // display all student details
                                             int i = 1;
-                                            // retrieve all documents from student collection
-                                            MongoCursor<Document> cursor = studentsCol.find()
-                                                    .sort(Sorts.ascending("name")).iterator();
-                                            // print the retrieved documents in a table format
-                                            System.out.println("- Student Details Table -");
-                                            System.out.println();
-                                            System.out.format("%-6s%-20s%-16s%-15s%-11s\n", "", "Name", "SID", "Branch",
-                                                    "Semester");
-                                            System.out.println();
-                                            try {
-                                                while (cursor.hasNext()) {
-                                                    Document doc = cursor.next();
-                                                    System.out.format("%-6s%-20s%-16s%-15s%-11s\n",
-                                                            String.valueOf(i) + ".",
-                                                            doc.get("name").toString().toUpperCase(),
-                                                            doc.get("sid").toString().toUpperCase(),
-                                                            doc.get("branch").toString().toUpperCase(),
-                                                            doc.get("sem").toString().toUpperCase());
-                                                    i++;
+                                            // Check if students collection is empty, if empty print error message else
+                                            // print all docs
+                                            if (studentsCol.countDocuments() <= 0) {
+                                                System.out.println(
+                                                        "There are no student details in the database to be displayed!\nPlease try again after adding a new student.\n");
+                                            } else {
+                                                // retrieve all documents from student collection
+                                                MongoCursor<Document> cursor = studentsCol.find()
+                                                        .sort(Sorts.ascending("name")).iterator();
+                                                // print the retrieved documents in a table format
+                                                System.out.println("- Student Details Table -");
+                                                System.out.println();
+                                                System.out.format("%-6s%-20s%-16s%-15s%-11s\n", "", "Name", "SID",
+                                                        "Branch",
+                                                        "Semester");
+                                                System.out.println();
+                                                try {
+                                                    while (cursor.hasNext()) {
+                                                        Document doc = cursor.next();
+                                                        System.out.format("%-6s%-20s%-16s%-15s%-11s\n",
+                                                                String.valueOf(i) + ".",
+                                                                doc.get("name").toString().toUpperCase(),
+                                                                doc.get("sid").toString().toUpperCase(),
+                                                                doc.get("branch").toString().toUpperCase(),
+                                                                doc.get("sem").toString().toUpperCase());
+                                                        i++;
+                                                    }
+                                                    System.out.println();
+                                                } catch (Exception e) {
+                                                    System.out.println("Error: " + e
+                                                            + "\nCould not retrieve data from the database!\nPlease try again.\n");
+                                                    System.out.println();
+                                                } finally {
+                                                    // close the cursor
+                                                    cursor.close();
                                                 }
-                                                System.out.println();
-                                            } catch (Exception e) {
-                                                System.out.println("Error: " + e
-                                                        + "\nCould not retrieve data from the database!\nPlease try again.\n");
-                                                System.out.println();
-                                            } finally {
-                                                // close the cursor
-                                                cursor.close();
                                             }
                                             break;
                                         case 2:
@@ -263,7 +271,133 @@ public class Main {
 
                                 break;
                             case 6:
-                                // todo staff db menu
+                                // Display staff database menu
+                                int stfdb_choice = 0;
+                                // Staff database menu loops till user chooses option to go back to main menu
+                                do {
+                                    // Staff database menu
+                                    System.out.println("- Staff Database Menu -");
+                                    System.out.println("1. View all staff details");
+                                    System.out.println("2. Add staff");
+                                    System.out.println("3. Remove staff");
+                                    System.out.println("4. Back to main menu");
+                                    // Enter choice
+                                    System.out.print("Enter your choice: ");
+                                    stfdb_choice = sc.nextInt();
+                                    sc.nextLine();
+                                    System.out.println();
+
+                                    switch (stfdb_choice) {
+                                        case 1:
+                                            // display all staff details
+                                            int i = 1;
+                                            // Check if staff collection is empty, if empty print error message else
+                                            // print all docs
+                                            if (staffCol.countDocuments() <= 0) {
+                                                System.out.println(
+                                                        "There are no staff details in the database to be displayed!\nPlease try again after adding a new staff.\n");
+                                            } else {
+                                                // retrieve all documents from staff collection
+                                                MongoCursor<Document> cursor = staffCol.find()
+                                                        .sort(Sorts.ascending("name")).iterator();
+                                                // print the retrieved documents in a table format
+                                                System.out.println("- Staff Details Table -");
+                                                System.out.println();
+                                                System.out.format("%-6s%-20s%-16s%-15s\n", "", "Name", "STFID",
+                                                        "Department");
+                                                System.out.println();
+                                                try {
+                                                    while (cursor.hasNext()) {
+                                                        Document doc = cursor.next();
+                                                        System.out.format("%-6s%-20s%-16s%-15s\n",
+                                                                String.valueOf(i) + ".",
+                                                                doc.get("name").toString().toUpperCase(),
+                                                                doc.get("stfid").toString().toUpperCase(),
+                                                                doc.get("dept").toString().toUpperCase());
+                                                        i++;
+                                                    }
+                                                    System.out.println();
+                                                } catch (Exception e) {
+                                                    System.out.println("Error: " + e
+                                                            + "\nCould not retrieve data from the database!\nPlease try again.\n");
+                                                    System.out.println();
+                                                } finally {
+                                                    // close the cursor
+                                                    cursor.close();
+                                                }
+                                            }
+                                            break;
+                                        case 2:
+                                            // Add a new staff
+                                            // Enter the new staff details
+                                            System.out.println("- New Staff Details -");
+                                            System.out.print("Enter staff name: ");
+                                            String name = sc.nextLine().toLowerCase();
+                                            System.out.print("Enter staff STFID: ");
+                                            String stfid = sc.nextLine().toLowerCase();
+                                            System.out.print("Enter department: ");
+                                            String dept = sc.nextLine().toLowerCase();
+
+                                            // STFID has to be unique so check if a doc with the entered stfid already
+                                            // exists
+                                            Document doc = (Document) staffCol.find(eq("stfid", stfid)).first();
+                                            // if such a doc exists print error else insert the new doc
+                                            if (doc != null) {
+                                                System.out.println(
+                                                        "This STFID already exists. Staff STFID must be unique!\nPlease try again with a unique STFID.\n");
+                                                break;
+                                            } else {
+                                                // Insert new document with the entered info into the staff collection
+                                                try {
+                                                    InsertOneResult result = staffCol.insertOne(new Document()
+                                                            .append("_id", new ObjectId())
+                                                            .append("name", name)
+                                                            .append("stfid", stfid)
+                                                            .append("dept", dept));
+                                                    System.out.println("New staff added successfully!\n");
+                                                } catch (MongoException e) {
+                                                    System.err
+                                                            .println("Unable to add new staff due to an error: " + e);
+                                                    System.out.println();
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+                                            // Remove a staff from the staff collection
+                                            // Enter the stfid of the staff to be removed
+                                            System.out.println("- Remove a staff -");
+                                            System.out.print("Enter the STFID of the staff to be removed: ");
+                                            stfid = sc.nextLine().toLowerCase();
+
+                                            // Check if a staff with this stfid actually exists
+                                            doc = (Document) staffCol.find(eq("stfid", stfid)).first();
+                                            // If such a STFID does not exist print error else delete the doc
+                                            if (doc == null) {
+                                                System.out.println(
+                                                        "STFID not found!\nPlease try again with a valid STFID.\n");
+                                                break;
+                                            } else {
+                                                // delete the particular document from the staff collection
+                                                Bson query = eq("stfid", stfid);
+                                                try {
+                                                    staffCol.deleteOne(query);
+                                                    System.out
+                                                            .println("Staff removed successfully!\n");
+                                                } catch (MongoException e) {
+                                                    System.err
+                                                            .println("Unable to remove staff due to an error: " + e);
+                                                    System.out.println();
+                                                }
+                                            }
+                                            break;
+                                        case 4:
+                                            break;
+                                        default:
+                                            System.out.println("Please enter a valid choice!\n");
+                                            break;
+                                    }
+                                } while (stfdb_choice != 4);
+                                break;
                             case 7:
                                 // logout
                                 // set login_status = 0 to break out of the main menu loop and go back to first
