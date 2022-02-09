@@ -192,11 +192,11 @@ public class Main {
                                             // Enter the new student details
                                             System.out.println("- New Student Details -");
                                             System.out.print("Enter student name: ");
-                                            String name = sc.nextLine();
+                                            String name = sc.nextLine().toLowerCase();
                                             System.out.print("Enter student SID: ");
-                                            String sid = sc.nextLine();
+                                            String sid = sc.nextLine().toLowerCase();
                                             System.out.print("Enter branch: ");
-                                            String branch = sc.nextLine();
+                                            String branch = sc.nextLine().toLowerCase();
                                             System.out.print("Enter semester: ");
                                             String sem = sc.nextLine();
 
