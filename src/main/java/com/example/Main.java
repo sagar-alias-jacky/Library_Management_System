@@ -134,7 +134,146 @@ public class Main {
                                 // TODO history menu
                                 break;
                             case 4:
-                                // todo books db menu
+                                // Display books database menu
+                                int bookdb_choice = 0;
+                                // books database menu loops till user chooses option to go back to main menu
+                                do {
+                                    // books database menu
+                                    System.out.println("- Books Database Menu -");
+                                    System.out.println("1. View all book details");
+                                    System.out.println("2. Add book");
+                                    System.out.println("3. Remove book");
+                                    System.out.println("4. Back to main menu");
+                                    // Enter choice
+                                    System.out.print("Enter your choice: ");
+                                    bookdb_choice = sc.nextInt();
+                                    sc.nextLine();
+                                    System.out.println();
+
+                                    switch (bookdb_choice) {
+                                        case 1:
+                                            // display all book details
+                                            int i = 1;
+                                            // Check if books collection is empty, if empty print error message else
+                                            // print all docs
+                                            if (booksCol.countDocuments() <= 0) {
+                                                System.out.println(
+                                                        "There are no book details in the database to be displayed!\nPlease try again after adding a new student.\n");
+                                            } else {
+                                                // retrieve all documents from student collection
+                                                MongoCursor<Document> cursor = booksCol.find()
+                                                        .sort(Sorts.ascending("book_name")).iterator();
+                                                // print the retrieved documents in a table format
+                                                System.out.println("- Book Details Table -");
+                                                System.out.println();
+                                                System.out.format("%-6s%-40s%-16s%-20s%-11s%-11s%-20s\n", "", "Name",
+                                                        "BID",
+                                                        "Author",
+                                                        "Edition",
+                                                        "Year",
+                                                        "Status");
+                                                System.out.println();
+                                                try {
+                                                    while (cursor.hasNext()) {
+                                                        Document doc = cursor.next();
+                                                        System.out.format("%-6s%-40s%-16s%-20s%-11s%-11s%-20s\n",
+                                                                String.valueOf(i) + ".",
+                                                                doc.get("book_name").toString().toUpperCase(),
+                                                                doc.get("book_id").toString().toUpperCase(),
+                                                                doc.get("author").toString().toUpperCase(),
+                                                                doc.get("edition").toString().toUpperCase(),
+                                                                doc.get("pub_year"),
+                                                                doc.get("current_status").toString().toUpperCase());
+                                                        i++;
+                                                    }
+                                                    System.out.println();
+                                                } catch (Exception e) {
+                                                    System.out.println("Error: " + e
+                                                            + "\nCould not retrieve data from the database!\nPlease try again.\n");
+                                                    System.out.println();
+                                                } finally {
+                                                    // close the cursor
+                                                    cursor.close();
+                                                }
+                                            }
+                                            break;
+                                        case 2:
+                                            // Add a new book
+                                            // Enter the new book details
+                                            System.out.println("- New Book Details -");
+                                            System.out.print("Enter book name: ");
+                                            String name = sc.nextLine().toLowerCase();
+                                            System.out.print("Enter book ID: ");
+                                            String bid = sc.nextLine().toLowerCase();
+                                            System.out.print("Enter author name: ");
+                                            String author = sc.nextLine().toLowerCase();
+                                            System.out.print("Enter edition: ");
+                                            String edition = sc.nextLine();
+                                            System.out.print("Enter year of publication: ");
+                                            String year = sc.nextLine();
+
+                                            // book_id has to be unique so check if a doc with the entered bid already
+                                            // exists
+                                            Document doc = (Document) booksCol.find(eq("book_id", bid)).first();
+                                            // if such a doc exists print error else insert the new doc
+                                            if (doc != null) {
+                                                System.out.println(
+                                                        "This book ID already exists. Book ID must be unique!\nPlease try again with a unique book ID.\n");
+                                                break;
+                                            } else {
+                                                // Insert new document with the entered info into the book collection
+                                                try {
+                                                    InsertOneResult result = booksCol.insertOne(new Document()
+                                                            .append("_id", new ObjectId())
+                                                            .append("book_name", name)
+                                                            .append("book_id", bid)
+                                                            .append("author", author)
+                                                            .append("edition", edition)
+                                                            .append("pub_year", year)
+                                                            .append("current_status", "available in library"));
+                                                    System.out.println("New book added successfully!\n");
+                                                } catch (MongoException e) {
+                                                    System.err
+                                                            .println("Unable to add new book due to an error: " + e);
+                                                    System.out.println();
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+                                            // Remove a book from the books collection
+                                            // Enter the book_id of the book to be removed
+                                            System.out.println("- Remove a book -");
+                                            System.out.print("Enter the book ID of the book to be removed: ");
+                                            bid = sc.nextLine().toLowerCase();
+
+                                            // Check if a book with this book_id actually exists
+                                            doc = (Document) booksCol.find(eq("book_id", bid)).first();
+                                            // If such a book_id does not exist print error else delete the doc
+                                            if (doc == null) {
+                                                System.out.println(
+                                                        "Book ID not found!\nPlease try again with a valid book ID.\n");
+                                                break;
+                                            } else {
+                                                // delete the particular document from the books collection
+                                                Bson query = eq("book_id", bid);
+                                                try {
+                                                    booksCol.deleteOne(query);
+                                                    System.out
+                                                            .println("Book removed successfully!\n");
+                                                } catch (MongoException e) {
+                                                    System.err
+                                                            .println("Unable to remove book due to an error: " + e);
+                                                    System.out.println();
+                                                }
+                                            }
+                                            break;
+                                        case 4:
+                                            break;
+                                        default:
+                                            System.out.println("Please enter a valid choice!\n");
+                                            break;
+                                    }
+                                } while (bookdb_choice != 4);
                                 break;
                             case 5:
                                 // Display student database menu
@@ -268,7 +407,6 @@ public class Main {
                                             break;
                                     }
                                 } while (sdb_choice != 4);
-
                                 break;
                             case 6:
                                 // Display staff database menu
