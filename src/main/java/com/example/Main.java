@@ -6,6 +6,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.MongoCollection;
@@ -13,6 +14,12 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Filters.eq;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 import org.bson.Document;
@@ -125,13 +132,167 @@ public class Main {
                         System.out.println();
                         switch (choice) {
                             case 1:
-                                // TODO issue book
+                                // Issue a book
+                                System.out.println("- Book Issue Details -");
+                                System.out.print("Enter book ID: ");
+                                String book_id = sc.nextLine();
+                                System.out.print("Enter student ID: ");
+                                String sid = sc.nextLine();
+
+                                // Check if a book with this book_id actually exists
+                                Document doc = (Document) booksCol.find(eq("book_id", book_id)).first();
+                                // If such a book_id does not exist print error
+                                if (doc == null) {
+                                    System.out.println(
+                                            "Book ID not found!\nPlease try again with a valid book ID.\n");
+                                    break;
+                                }
+                                if (doc.get("current_status").toString().toLowerCase().equals("issued")) {
+                                    System.out.println("This book is currently not available in the library!\n");
+                                    break;
+                                }
+                                // Check if a student with this sid actually exists
+                                doc = (Document) studentsCol.find(eq("sid", sid)).first();
+                                // If such a sid does not exist print error
+                                if (doc == null) {
+                                    System.out.println(
+                                            "Student ID not found!\nPlease try again with a valid student ID.\n");
+                                    break;
+                                }
+                                try {
+                                    ObjectId histID = new ObjectId();
+                                    InsertOneResult result = historyCol.insertOne(new Document()
+                                            .append("_id", histID)
+                                            .append("book_id", book_id)
+                                            .append("sid", sid)
+                                            .append("status", "pending return"));
+
+                                    Document query = new Document().append("_id", histID);
+                                    Date doi = new Date();
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(doi);
+                                    cal.add(Calendar.DAY_OF_MONTH, 10);
+                                    Date dod = cal.getTime();
+                                    Bson updates = Updates.combine(
+                                            Updates.set("doi", doi),
+                                            Updates.set("dod", dod),
+                                            // Updates.set("dod",
+                                            // LocalDateTime.now(ZoneId.systemDefault()).plusDays(10)),
+                                            Updates.set("dor", "      -"));
+                                    historyCol.updateOne(query, updates);
+                                    // Update the book status in books collection
+                                    updates = Updates.combine(Updates.set("current_status", "issued"));
+                                    booksCol.updateOne(query, updates);
+                                    System.out.println("Book issued successfully!\n");
+                                } catch (Exception e) {
+                                    System.out.println("Book could not be issued due to an error!\n" + e
+                                            + "\nPlease try again.\n");
+                                }
                                 break;
                             case 2:
-                                // TODO return book
+                                // return a book
+                                // read book ID from user
+                                System.out.println("- Return Book -");
+                                System.out.print("Enter book ID: ");
+                                book_id = sc.nextLine();
+                                // check if a doc with that book_id is in the collection history
+                                doc = (Document) historyCol.find(eq("book_id", book_id)).sort(Sorts.descending("doi"))
+                                        .first();
+                                // If such a book_id does not exist print error
+                                if (doc == null) {
+                                    System.out.println(
+                                            "Book ID not found in library issue history!\nPlease try again with a valid book ID.\n");
+                                    break;
+                                } else if (doc != null && !doc.get("status").toString().equals("returned")) {
+                                    try {
+                                        // Update dor and status in history collection
+                                        Document query = new Document().append("_id", doc.get("_id"));
+                                        Date dor = new Date();
+                                        Bson updates = Updates.combine(
+                                                Updates.set("dor", dor),
+                                                Updates.set("status", "returned"));
+                                        historyCol.updateOne(query, updates);
+                                        // Update the book status in books collection
+                                        updates = Updates
+                                                .combine(Updates.set("current_status", "available in library"));
+                                        booksCol.updateOne(query, updates);
+                                        System.out.println("Book returned successfully!\n");
+                                    } catch (Exception e) {
+                                        System.out.println(
+                                                "Could not return the book due to an error: " + e
+                                                        + "\nPlease try again.");
+                                    }
+                                }
                                 break;
                             case 3:
-                                // TODO history menu
+                                // Book Issue History Menu
+                                int hm_choice = 0;
+                                do {
+                                    System.out.println("- Book Issue History -");
+                                    System.out.println("1. Books pending return");
+                                    System.out.println("2. Full history");
+                                    System.out.println("3. Back to main menu");
+                                    System.out.print("Enter a choice: ");
+                                    hm_choice = sc.nextInt();
+                                    sc.nextLine();
+                                    System.out.println();
+                                    switch (hm_choice) {
+                                        case 1:
+                                            // todo view issued books pending return
+                                            break;
+                                        case 2:
+                                            // view full book issue history
+                                            int i = 1;
+                                            // Check if history collection is empty, if empty print error message else
+                                            // print all docs
+                                            if (historyCol.countDocuments() <= 0) {
+                                                System.out.println(
+                                                        "There are no book issue details in the database to be displayed!\n");
+                                            } else {
+                                                // retrieve all documents from history collection
+                                                MongoCursor<Document> cursor = historyCol.find()
+                                                        .sort(Sorts.descending("doi")).iterator();
+                                                // print the retrieved documents in a table format
+                                                System.out.println("- Book Issue History Table -");
+                                                System.out.println();
+                                                System.out.format("%-6s%-12s%-16s%-35s%-35s%-35s%-20s\n", "", "Book ID",
+                                                        "Student ID",
+                                                        "Date of Issue",
+                                                        "Due Date",
+                                                        "Date of Return",
+                                                        "Status");
+                                                System.out.println();
+                                                try {
+                                                    while (cursor.hasNext()) {
+                                                        doc = cursor.next();
+                                                        System.out.format("%-6s%-12s%-16s%-35s%-35s%-35s%-20s\n",
+                                                                String.valueOf(i) + ".",
+                                                                doc.get("book_id").toString().toUpperCase(),
+                                                                doc.get("sid").toString().toUpperCase(),
+                                                                doc.get("doi").toString().toUpperCase(),
+                                                                doc.get("dod").toString().toUpperCase(),
+                                                                doc.get("dor").toString().toUpperCase(),
+                                                                doc.get("status").toString().toUpperCase());
+                                                        i++;
+                                                    }
+                                                    System.out.println();
+                                                } catch (Exception e) {
+                                                    System.out.println("Error: " + e
+                                                            + "\nCould not retrieve data from the database!\nPlease try again.\n");
+                                                    System.out.println();
+                                                } finally {
+                                                    // close the cursor
+                                                    cursor.close();
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+                                            break;
+                                        default:
+                                            System.out.println("Please enter a valid choice!\n");
+                                            break;
+                                    }
+                                } while (hm_choice != 3);
                                 break;
                             case 4:
                                 // Display books database menu
@@ -175,7 +336,7 @@ public class Main {
                                                 System.out.println();
                                                 try {
                                                     while (cursor.hasNext()) {
-                                                        Document doc = cursor.next();
+                                                        doc = cursor.next();
                                                         System.out.format("%-6s%-40s%-16s%-20s%-11s%-11s%-20s\n",
                                                                 String.valueOf(i) + ".",
                                                                 doc.get("book_name").toString().toUpperCase(),
@@ -214,7 +375,7 @@ public class Main {
 
                                             // book_id has to be unique so check if a doc with the entered bid already
                                             // exists
-                                            Document doc = (Document) booksCol.find(eq("book_id", bid)).first();
+                                            doc = (Document) booksCol.find(eq("book_id", bid)).first();
                                             // if such a doc exists print error else insert the new doc
                                             if (doc != null) {
                                                 System.out.println(
@@ -314,7 +475,7 @@ public class Main {
                                                 System.out.println();
                                                 try {
                                                     while (cursor.hasNext()) {
-                                                        Document doc = cursor.next();
+                                                        doc = cursor.next();
                                                         System.out.format("%-6s%-20s%-16s%-15s%-11s\n",
                                                                 String.valueOf(i) + ".",
                                                                 doc.get("name").toString().toUpperCase(),
@@ -341,7 +502,7 @@ public class Main {
                                             System.out.print("Enter student name: ");
                                             String name = sc.nextLine().toLowerCase();
                                             System.out.print("Enter student SID: ");
-                                            String sid = sc.nextLine().toLowerCase();
+                                            sid = sc.nextLine().toLowerCase();
                                             System.out.print("Enter branch: ");
                                             String branch = sc.nextLine().toLowerCase();
                                             System.out.print("Enter semester: ");
@@ -349,7 +510,7 @@ public class Main {
 
                                             // SID has to be unique so check if a doc with the entered sid already
                                             // exists
-                                            Document doc = (Document) studentsCol.find(eq("sid", sid)).first();
+                                            doc = (Document) studentsCol.find(eq("sid", sid)).first();
                                             // if such a doc exists print error else insert the new doc
                                             if (doc != null) {
                                                 System.out.println(
@@ -446,7 +607,7 @@ public class Main {
                                                 System.out.println();
                                                 try {
                                                     while (cursor.hasNext()) {
-                                                        Document doc = cursor.next();
+                                                        doc = cursor.next();
                                                         System.out.format("%-6s%-20s%-16s%-15s\n",
                                                                 String.valueOf(i) + ".",
                                                                 doc.get("name").toString().toUpperCase(),
@@ -478,7 +639,7 @@ public class Main {
 
                                             // STFID has to be unique so check if a doc with the entered stfid already
                                             // exists
-                                            Document doc = (Document) staffCol.find(eq("stfid", stfid)).first();
+                                            doc = (Document) staffCol.find(eq("stfid", stfid)).first();
                                             // if such a doc exists print error else insert the new doc
                                             if (doc != null) {
                                                 System.out.println(
