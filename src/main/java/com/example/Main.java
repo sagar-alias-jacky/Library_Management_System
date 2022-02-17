@@ -876,6 +876,7 @@ public class Main {
                     break;
                 case 2:
                     // exit out of the library management system program
+                    sc.close();
                     System.out.println("Library Management System exited.");
                     System.exit(0);
                 default:
