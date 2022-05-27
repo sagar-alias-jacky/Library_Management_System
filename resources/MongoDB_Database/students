@@ -1,0 +1,81 @@
+[{
+  "_id": {
+    "$oid": "620282ca5b44bed51a6a7082"
+  },
+  "name": "sagar paul",
+  "sid": "s001",
+  "branch": "cse",
+  "sem": "5"
+},{
+  "_id": {
+    "$oid": "6203928ea01c042c6bcd2788"
+  },
+  "name": "varun c",
+  "sid": "s002",
+  "branch": "ece",
+  "sem": "2"
+},{
+  "_id": {
+    "$oid": "6203929ea01c042c6bcd2789"
+  },
+  "name": "paul g",
+  "sid": "s003",
+  "branch": "mech",
+  "sem": "8"
+},{
+  "_id": {
+    "$oid": "620392b2a01c042c6bcd278a"
+  },
+  "name": "alston peter",
+  "sid": "s004",
+  "branch": "it",
+  "sem": "5"
+},{
+  "_id": {
+    "$oid": "6203cb7f93c8d34bef392c20"
+  },
+  "name": "royal alexander",
+  "sid": "s005",
+  "branch": "cse",
+  "sem": "1"
+},{
+  "_id": {
+    "$oid": "6203cba593c8d34bef392c21"
+  },
+  "name": "rijo thomas",
+  "sid": "s006",
+  "branch": "civil",
+  "sem": "8"
+},{
+  "_id": {
+    "$oid": "6203cbcf93c8d34bef392c22"
+  },
+  "name": "romio mathew",
+  "sid": "s007",
+  "branch": "aids",
+  "sem": "3"
+},{
+  "_id": {
+    "$oid": "6203cc1593c8d34bef392c23"
+  },
+  "name": "nihal manoj",
+  "sid": "s008",
+  "branch": "aie",
+  "sem": "4"
+},{
+  "_id": {
+    "$oid": "6203cc6393c8d34bef392c24"
+  },
+  "name": "pewen prajith",
+  "sid": "s009",
+  "branch": "cse",
+  "sem": "7"
+},{
+  "_id": {
+    "$oid": "62294cbfcd4916711cad6d1c"
+  },
+  "name": "nidhin santhosh",
+  "sid": "s011",
+  "branch": "cse",
+  "sem": "6"
+}]

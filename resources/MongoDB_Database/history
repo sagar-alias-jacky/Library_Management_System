@@ -1,0 +1,63 @@
+[{
+  "_id": {
+    "$oid": "622046d24e14b75708d5793b"
+  },
+  "book_id": "b001",
+  "sid": "s001",
+  "status": "returned",
+  "dod": {
+    "$date": {
+      "$numberLong": "1647146450341"
+    }
+  },
+  "doi": {
+    "$date": {
+      "$numberLong": "1646282450341"
+    }
+  },
+  "dor": {
+    "$date": {
+      "$numberLong": "1646282481463"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "62294f39cd4916711cad6d1e"
+  },
+  "book_id": "b002",
+  "sid": "s006",
+  "status": "pending return",
+  "dod": {
+    "$date": {
+      "$numberLong": "1647738425629"
+    }
+  },
+  "doi": {
+    "$date": {
+      "$numberLong": "1646874425629"
+    }
+  },
+  "dor": "      -"
+},{
+  "_id": {
+    "$oid": "62294fd7cd4916711cad6d1f"
+  },
+  "book_id": "b007",
+  "sid": "s001",
+  "status": "returned",
+  "dod": {
+    "$date": {
+      "$numberLong": "1647738583637"
+    }
+  },
+  "doi": {
+    "$date": {
+      "$numberLong": "1646874583637"
+    }
+  },
+  "dor": {
+    "$date": {
+      "$numberLong": "1646874643355"
+    }
+  }
+}]

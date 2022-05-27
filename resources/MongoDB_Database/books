@@ -1,0 +1,51 @@
+[{
+  "_id": {
+    "$oid": "62027c8e5b44bed51a6a705d"
+  },
+  "book_id": "b001",
+  "book_name": "Life Of Dingan",
+  "author": "Soman Olatunji",
+  "edition": "2",
+  "pub_year": "2015",
+  "current_status": "available in library"
+},{
+  "_id": {
+    "$oid": "62027e955b44bed51a6a705e"
+  },
+  "book_id": "b002",
+  "book_name": "The Curious Case Of KTU Syllabus",
+  "author": "Tintumon PP",
+  "edition": "1",
+  "pub_year": "2021",
+  "current_status": "available in library"
+},{
+  "_id": {
+    "$oid": "6202a23c5b44bed51a6a7086"
+  },
+  "book_id": "b003",
+  "book_name": "Normal People",
+  "author": "Sally Rooney",
+  "edition": "1",
+  "pub_year": "2018",
+  "current_status": "available in library"
+},{
+  "_id": {
+    "$oid": "622046234e14b75708d5793a"
+  },
+  "book_name": "greenhouse effect",
+  "book_id": "b004",
+  "author": "sagaqr paul",
+  "edition": "3",
+  "pub_year": "2019",
+  "current_status": "available in library"
+},{
+  "_id": {
+    "$oid": "62294ae8cd4916711cad6d1b"
+  },
+  "book_name": "the alchemist",
+  "book_id": "b007",
+  "author": "paulo coello",
+  "edition": "1",
+  "pub_year": "2014",
+  "current_status": "available in library"
+}]

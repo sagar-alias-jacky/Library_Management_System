@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "6203cb1093c8d34bef392c1e"
+  },
+  "name": "mark antony",
+  "stfid": "stf001",
+  "dept": "cse"
+},{
+  "_id": {
+    "$oid": "6203cb3b93c8d34bef392c1f"
+  },
+  "name": "thacholi ambu",
+  "stfid": "stf002",
+  "dept": "mech"
+},{
+  "_id": {
+    "$oid": "6203cdb8b7417c02b7ebc627"
+  },
+  "name": "thangappan",
+  "stfid": "stf003",
+  "dept": "aids"
+},{
+  "_id": {
+    "$oid": "6203cde1b7417c02b7ebc628"
+  },
+  "name": "shoshaama",
+  "stfid": "stf004",
+  "dept": "civil"
+},{
+  "_id": {
+    "$oid": "6203ce0eb7417c02b7ebc629"
+  },
+  "name": "priya c",
+  "stfid": "stf005",
+  "dept": "ece"
+}]
