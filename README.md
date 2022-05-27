@@ -48,13 +48,13 @@ A simple CLI based Library Management System.
 Clone the project.
 
 ```bash
-git clone https://link-to-project
+https://github.com/sagar-alias-jacky/s5_dbms_lab_library_management_system_project.git
 ```
 
 Go to the project directory.
 
 ```bash
-cd my-project
+cd s5_dbms_lab_library_management_system_project
 ```
 
 Open the project in Visual Studio Code or any IDE of your choice which supports Java and Maven projects. We will be using Visual Studio Code for this example.
